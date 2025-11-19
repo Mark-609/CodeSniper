@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Code Checker</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      background: #f5f5f5;
+    }
+    input {
+      font-size: 2rem;
+      text-align: center;
+      width: 200px;
+      letter-spacing: 5px;
+    }
+    button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 1rem;
+    }
+    #status {
+      margin-top: 20px;
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+    #timer {
+      margin-top: 10px;
+      font-size: 1.2rem;
+    }
+  </style>
+</head>
+<body>
+  <h1>Code Checker</h1>
+  <input id="codeInput" maxlength="6" pattern="[0-9]{6}" />
+  <button id="startBtn">Start</button>
+  <button id="checkBtn">Check Code</button>
+
+  <div id="status"></div>
+  <div id="timer">Timer: 0s</div>
+
+  <script>
+    const masterCode = "99999999999999999999";
+    const codeInput = document.getElementById("codeInput");
+    const statusDiv = document.getElementById("status");
+    const timerDiv = document.getElementById("timer");
+    const startBtn = document.getElementById("startBtn");
+    const checkBtn = document.getElementById("checkBtn");
+    
+    let timer = 0;
+    let interval = null;
+    let running = false;
+
+    // Create length selector
+    const selector = document.createElement("select");
+    selector.id = "lengthSelect";
+    for (let i = 1; i <= 20; i++) {
+      const opt = document.createElement("option");
+      opt.value = i;
+      opt.textContent = `${i} digits`;
+      selector.appendChild(opt);
+    }
+    document.body.insertBefore(selector, codeInput);
+
+    selector.addEventListener("change", () => {
+      const len = Number(selector.value);
+      codeInput.maxLength = len;
+      codeInput.value = "";
+    });
+    codeInput.maxLength = 1;
+
+    startBtn.addEventListener("click", () => {
+      if (!running) {
+        timer = 0;
+        timerDiv.textContent = `Timer: ${timer}s`;
+        statusDiv.textContent = "";
+        running = true;
+        interval = setInterval(() => {
+          timer++;
+          timerDiv.textContent = `Timer: ${timer}s`;
+        }, 1000);
+      }
+    });
+
+    codeInput.addEventListener("keydown", e => {
+      if (e.key === "Enter") {
+        checkBtn.click();
+      }
+    });
+
+    checkBtn.addEventListener("click", () => {
+      const val = codeInput.value;
+      const len = Number(selector.value);
+      const correctCode = masterCode.substring(0, len);
+
+      if (val.length !== len || !/^[0-9]+$/.test(val)) {
+        statusDiv.textContent = `Enter a valid ${len}-digit code`;
+        statusDiv.style.color = "red";
+        return;
+      }
+
+      if (val === correctCode) {
+        statusDiv.textContent = "Correct!";
+        statusDiv.style.color = "green";
+        clearInterval(interval);
+        running = false;
+      } else {
+        statusDiv.textContent = "Incorrect";
+        statusDiv.style.color = "red";
+      }
+    });
+  </script>
+</body>
+</html>
