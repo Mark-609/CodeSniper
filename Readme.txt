@@ -43,5 +43,7 @@ For 20 Digits  | python cracker_v2.0.py --all-combinations -l 20 --type --force
 __________________________________________________________________________
 
 v 2.0               ⚠️ Any errors might accure if used on old hardware ⚠️
+                    ⚠️               Use at own risk!                  ⚠️
 
                     ⚠️                 Use at own risk!                ⚠️
+
