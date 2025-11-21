@@ -1,7 +1,7 @@
 ================================================================
  | ⚠️ IMPORTANT: Python with PyAutoGUI Must Be Installed! ⚠️ |
 ================================================================
- | Install PyAutoGUI with this command pip install pyautogui  |
+ | Install PyAutoGUI with this command: pip install pyautogui  |
 ================================================================
 
 Make sure to download latest release!
@@ -44,5 +44,6 @@ __________________________________________________________________________
 
 v 2.0               ⚠️ Any errors might accure if used on old hardware ⚠️
                     ⚠️               Use at own risk!                  ⚠️
+
 
 
