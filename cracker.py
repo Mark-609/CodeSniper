@@ -7,24 +7,52 @@ def generate_all_combinations(length):
     for i in range(total):
         yield str(i).zfill(length)
 
-def automate_typing(codes, interval=0.05, delete_after=True,
-                    countdown=5, disable_failsafe=False):
+def automate_typing(
+    codes,
+    prefix="",
+    interval=0.05,
+    delete_after=True,
+    countdown=5,
+    disable_failsafe=False,
+):
     import pyautogui
+    import pygetwindow as gw
 
     if disable_failsafe:
         pyautogui.FAILSAFE = False
     pyautogui.PAUSE = 0.0
 
+    # Capture the currently focused window
+    start_window = gw.getActiveWindow()
+    if start_window is None:
+        print("❌ No active window detected. Aborting.")
+        return
+
+    start_title = start_window.title
+    print(f"Locked onto window: \"{start_title}\"")
+
     if countdown > 0:
-        print(f"Starting in {countdown} seconds. Focus on the typing box...")
+        print(f"Starting in {countdown} seconds. Focus the text box...")
         for i in range(countdown, 0, -1):
             print(i, end=" ", flush=True)
             time.sleep(1)
         print("\nStarting now...\n")
 
     for idx, code in enumerate(codes, start=1):
-        print(f"[{idx}] Typing: {code}")
-        pyautogui.write(code)
+        current_window = gw.getActiveWindow()
+
+        # Stop if focus is lost or window changes
+        if (
+            current_window is None
+            or current_window.title != start_title
+        ):
+            print("\n🛑 Focus lost or text box unavailable. Stopping.")
+            break
+
+        full_text = f"{prefix}{code}"
+        print(f"[{idx}] Typing: {full_text}")
+
+        pyautogui.write(full_text)
         pyautogui.press("enter")
 
         if delete_after:
@@ -32,7 +60,6 @@ def automate_typing(codes, interval=0.05, delete_after=True,
             pyautogui.press("backspace")
 
         time.sleep(interval)
-
 
 def main():
     parser = argparse.ArgumentParser(
@@ -48,6 +75,9 @@ def main():
 
     parser.add_argument("-l", "--length", type=int, default=1,
                         help="Length of numeric combinations")
+
+    parser.add_argument("--prefix", type=str, default="",
+                        help="Word or text typed before every code")
 
     parser.add_argument("--interval", type=float, default=0.05)
     parser.add_argument("--countdown", type=int, default=5)
@@ -72,6 +102,7 @@ def main():
     if args.type:
         automate_typing(
             codes,
+            prefix=args.prefix,
             interval=args.interval,
             delete_after=not args.no_delete,
             countdown=args.countdown,
