@@ -9,27 +9,18 @@ def generate_all_combinations(length):
 
 def automate_typing(
     codes,
-    prefix="",
+    prefix=None,
     interval=0.05,
     delete_after=True,
     countdown=5,
     disable_failsafe=False,
 ):
     import pyautogui
-    import pygetwindow as gw
+    import keyboard  # pip install keyboard
 
     if disable_failsafe:
         pyautogui.FAILSAFE = False
     pyautogui.PAUSE = 0.0
-
-    # Capture the currently focused window
-    start_window = gw.getActiveWindow()
-    if start_window is None:
-        print("❌ No active window detected. Aborting.")
-        return
-
-    start_title = start_window.title
-    print(f"Locked onto window: \"{start_title}\"")
 
     if countdown > 0:
         print(f"Starting in {countdown} seconds. Focus the text box...")
@@ -38,26 +29,28 @@ def automate_typing(
             time.sleep(1)
         print("\nStarting now...\n")
 
-    for idx, code in enumerate(codes, start=1):
-        current_window = gw.getActiveWindow()
+    print("Press ESC at any time to stop.\n")
 
-        # Stop if focus is lost or window changes
-        if (
-            current_window is None
-            or current_window.title != start_title
-        ):
-            print("\n🛑 Focus lost or text box unavailable. Stopping.")
+    for idx, code in enumerate(codes, start=1):
+        # Manual stop
+        if keyboard.is_pressed("esc"):
+            print("\n🛑 ESC pressed. Stopping.")
             break
 
-        full_text = f"{prefix}{code}"
+        full_text = f"{prefix}{code}" if prefix else code
         print(f"[{idx}] Typing: {full_text}")
 
-        pyautogui.write(full_text)
-        pyautogui.press("enter")
+        try:
+            pyautogui.write(full_text)
+            pyautogui.press("enter")
 
-        if delete_after:
-            pyautogui.hotkey("ctrl", "a")
-            pyautogui.press("backspace")
+            if delete_after:
+                pyautogui.hotkey("ctrl", "a")
+                pyautogui.press("backspace")
+
+        except Exception as e:
+            print(f"\n🛑 Typing failed ({e}). Stopping.")
+            break
 
         time.sleep(interval)
 
@@ -67,37 +60,47 @@ def main():
     )
 
     parser.add_argument("--all-combinations",
-                        action="store_true",
-                        help="Generate all numeric combinations of given length")
+                        action="store_true")
 
-    parser.add_argument("--type", action="store_true",
-                        help="Enable auto typing")
+    parser.add_argument("--type",
+                        action="store_true")
 
-    parser.add_argument("-l", "--length", type=int, default=1,
-                        help="Length of numeric combinations")
+    parser.add_argument("-l", "--length",
+                        type=int, default=1)
 
-    parser.add_argument("--prefix", type=str, default="",
-                        help="Word or text typed before every code")
+    parser.add_argument("--prefix",
+                        type=str, default=None,
+                        help="Optional text typed before every code")
 
-    parser.add_argument("--interval", type=float, default=0.05)
-    parser.add_argument("--countdown", type=int, default=5)
-    parser.add_argument("--no-delete", action="store_true")
-    parser.add_argument("--disable-failsafe", action="store_true")
-    parser.add_argument("--force", action="store_true")
+    parser.add_argument("--interval",
+                        type=float, default=0.05)
+
+    parser.add_argument("--countdown",
+                        type=int, default=5)
+
+    parser.add_argument("--no-delete",
+                        action="store_true")
+
+    parser.add_argument("--disable-failsafe",
+                        action="store_true")
+
+    parser.add_argument("--force",
+                        action="store_true")
 
     args = parser.parse_args()
 
-    if args.all_combinations:
-        total = 10 ** args.length
-        if total > 1000 and args.type and not args.force:
-            raise SystemExit(
-                f"Refusing to type {total:,} combinations without --force"
-            )
-        codes = generate_all_combinations(args.length)
-        print(f"Generating ALL combinations of length {args.length}")
-        print(f"→ Total: {total:,} combinations\n")
-    else:
-        raise SystemExit("You must use --all-combinations in this mode.")
+    if not args.all_combinations:
+        raise SystemExit("You must use --all-combinations.")
+
+    total = 10 ** args.length
+    if total > 1000 and args.type and not args.force:
+        raise SystemExit(
+            f"Refusing to type {total:,} combinations without --force"
+        )
+
+    codes = generate_all_combinations(args.length)
+    print(f"Generating ALL combinations of length {args.length}")
+    print(f"→ Total: {total:,} combinations\n")
 
     if args.type:
         automate_typing(
