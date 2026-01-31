@@ -1,10 +1,17 @@
-# Code Sniper
+# Code Sniper v3.1
 Crack everything in no-time
 ---
 
- **⚠️ IMPORTANT: Python with PyAutoGUI Must Be Installed!**
+ **⚠️ IMPORTANT: Python with Must Be Installed!**
  
- **⚠️ Install PyAutoGUI with this command: pip install pyautogui**
+ **⚠️ Install PyAutoGUI with this command** 
+ ```
+pip install pyautogui
+ ```
+⚠️ **Install Keyboard for python with this command**
+```
+pip install keyboard
+```
  
  ---
  # 📦 Download
@@ -18,12 +25,12 @@ Readme is based on latest release.
 
 ---
 # ⚙️ Commands
-## Change the word at the end (Sniper) into any word leave blank if you dont want a word
+## Change the word at the end (Sniper) into any word remove "--prefix sniper" if you dont want a word
 
 This Procces wil take up to 686 Seconds to crack a 4 digit long code.
 | **Digits** | **Command** 
 |-----------------------|------------------|
-| 1               | python cracker_v3.0.py --all-combinations -l 1 --type --prefix sniper --force
+| 1               | 1python cracker_v3.0.py --all-combinations -l 1 --type --prefix sniper --force
 | 2               | python cracker_v3.0.py --all-combinations -l 2 --type --prefix sniper --force
 | 3               | python cracker_v3.0.py --all-combinations -l 3 --type --prefix sniper --force
 | 4               | python cracker_v3.0.py --all-combinations -l 4 --type --prefix sniper --force
@@ -49,4 +56,5 @@ This Procces wil take up to 686 Seconds to crack a 4 digit long code.
 Any errors might accure if used on old hardware
 
 Use at own risk! 
+
 
